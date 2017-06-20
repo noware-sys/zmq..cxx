@@ -1,0 +1,4 @@
+A wrapper around ZMQ for C++
+
+Notable Components
+	zmq::msg (a multipart message)
