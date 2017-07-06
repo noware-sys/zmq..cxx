@@ -55,6 +55,23 @@ namespace zmq
 			virtual const bool operator == (const zmq_msg_t *) const;
 			virtual const bool operator == (const std::string &) const;
 			
+			virtual const bool is_empty () const;
+			virtual const bool is_full () const;
+			
+			virtual const bool first (frame &) const;
+			virtual const bool last (frame &) const;
+			
+			virtual const frame first (void) const;
+			virtual const frame last (void) const;
+			
+			virtual const bool first_rm (void);
+			virtual const bool last_rm (void);
+			
+			virtual const bool first_rm (frame &);
+			virtual const bool last_rm (frame &);
+			
+			virtual const bool append (const frame &);
+			virtual const bool prepend (const frame &);
 			
 			// frame
 			
@@ -62,12 +79,15 @@ namespace zmq
 			//virtual const bool operator != (const zmsg_t &) const;
 			//virtual const bool operator != (const frame &) const;
 		//protected:
-			std::map <noware::nr/* key type*/, frame/* value type*/> data;
+			//std::map <noware::nr/* key type*/, frame/* value type*/> data;
+			std::map <unsigned int/* key type*/, frame/* value type*/> data;
 			//zmsg_t data;
 		protected:
 			virtual const bool fin (void);
 			virtual const bool init (void);
 			
+			virtual const bool first_space_clear (void);
+			virtual const bool first_space_fill (void);
 	};
 	
 	//typedef noware::list <message_t, noware::nr> msg;

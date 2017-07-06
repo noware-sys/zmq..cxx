@@ -4,7 +4,10 @@
 
 namespace zmq
 {
-*/	class frame
+*/
+	class frame
+	// TODO
+	// handle nullptr case
 	{
 		public:
 			frame (void);

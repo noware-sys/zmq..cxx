@@ -21,6 +21,7 @@
 zmq::msg::msg (void)
 {
 	init ();
+	//*this = "";
 }
 
 zmq::msg::msg (const msg & other)
@@ -241,4 +242,246 @@ const bool zmq::msg::operator == (const zmq_msg_t * other) const
 const bool zmq::msg::operator == (const std::string & other) const
 {
 	return *this == msg (other);
+}
+
+const bool zmq::msg::is_empty () const
+{
+	return data.empty ();
+}
+
+const bool zmq::msg::is_full () const
+{
+	return false;
+}
+
+const bool zmq::msg::first (frame & f) const
+{
+	if (is_empty ())
+		return false;
+	
+	f = data [1];
+	
+	return true;
+}
+
+const bool zmq::msg::last (frame & f) const
+{
+	if (is_empty ())
+		return false;
+	
+	f = data [data.size ()];
+	
+	return true;
+}
+
+const zmq::msg::frame zmq::msg::first (void) const
+{
+	frame f;
+	
+	if (!is_empty ())
+		f = data [1];
+		
+	return f;
+}
+
+const zmq::msg::frame zmq::msg::last (void) const
+{
+	frame f;
+	
+	if (!is_empty ())
+		f = data [data.size ()];
+		
+	return f;
+}
+
+const bool zmq::msg::first_rm (void)
+{
+	if (is_empty ())
+		return true;
+	
+	if (!first_space_fill ())
+		return false;
+	
+	//data.erase (1);
+	
+	return true;
+}
+
+const bool zmq::msg::last_rm (void)
+{
+	if (is_empty ())
+		return true;
+	
+	data.erase (data.size ());
+	
+	return true;
+}
+
+const bool zmq::msg::first_rm (frame & f)
+{
+	if (is_empty ())
+		return true;
+	
+	f = data [1];
+	//data.erase (1);
+	
+	if (!first_space_fill ())
+		return false;
+	
+	return true;
+}
+
+const bool zmq::msg::last_rm (frame & f)
+{
+	if (is_empty ())
+		return true;
+	
+	f = data [data.size ()];
+	data.erase (data.size ());
+	
+	return true;
+}
+
+const bool zmq::msg::append (const frame & f)
+{
+	if (is_full ())
+		return false;
+	
+	data [data.size () + 1] = f;
+	
+	return true;
+}
+
+const bool zmq::msg::prepend (const frame & f)
+{
+	if (is_full ())
+		return false;
+	
+	if (!first_space_clear ())
+		return false;
+	
+	data [1] = f;
+	//data.insert_or_assign (1, f);
+	
+	for (const std::pair <noware::nr, frame> & element : data)
+	{
+		std::cout << "zmq::msg::prepend()::data[" << element.first << "]==\"" << std::string (element.second) << "\"" << std::endl;
+	}
+	
+	return true;
+}
+
+const bool zmq::msg::first_space_clear (void)
+{
+	std::cout << "zmq::msg::first_clear_space()::called" << std::endl;
+	if (is_empty ())
+	{
+		// nothing to do
+		std::cout << "zmq::msg::first_clear_space()::is_empty()==[true]" << std::endl;
+		return true;
+	}
+	std::cout << "zmq::msg::first_clear_space()::is_empty()==[false]" << std::endl;
+	
+	if (is_full ())
+	{
+		std::cout << "zmq::msg::first_clear_space()::is_full()==[true]" << std::endl;
+		// no more space
+		return false;
+	}
+	std::cout << "zmq::msg::first_clear_space()::is_full()==[false]" << std::endl;
+	
+	std::map <unsigned int, frame> result;
+	//std::string key;
+	//std::string key_tmp;
+	//frame tmp;
+	
+	for (const std::pair <unsigned int, frame> & element : data)
+	{
+		//key = element.first;
+		//element.first = "key_tmp";
+		
+		result [element.first + 1] = element.second;
+		//result [element.first + 1] = data [element.first];
+		//tmp = element.second;
+		//data.erase (element.first);
+		//data [element.first + 1];
+	}
+	//data.erase (0);
+	data.clear ();
+	for (const std::pair <unsigned int, frame> & element : result)
+	{
+		//key = element.first;
+		//element.first = "key_tmp";
+		
+		data [element.first] = element.second;
+		//data [element.first] = result [element.first];
+		//tmp = element.second;
+		//data.erase (element.first);
+		//data [element.first + 1];
+	}
+	//result.clear ();
+	
+	for (const std::pair <unsigned int, frame> & element : data)
+	{
+		//key = element.first;
+		//element.first = "key_tmp";
+		
+		//data [element.first] = element.second;
+		//tmp = element.second;
+		//data.erase (element.first);
+		//data [element.first + 1];
+		std::cout << "zmq::msg::first_clear_space()::data[" << element.first << "]==\"" << std::string (element.second) << "\"" << std::endl;
+	}
+	
+	//std::swap (data, result);
+	//data = result
+	
+	std::cout << "zmq::msg::first_clear_space()::return" << std::endl;
+	return true;
+}
+
+const bool zmq::msg::first_space_fill (void)
+{
+	if (is_empty ())
+		// nothing to do
+		return true;
+	
+	//if (is_full ())
+	//	// no more space
+	//	return false;
+	
+	std::map <unsigned int, frame> result;
+	//std::string key;
+	//std::string key_tmp;
+	//frame tmp;
+	
+	for (const std::pair <unsigned int, frame> & element : data)
+	{
+		//key = element.first;
+		//element.first = "key_tmp";
+		
+		result [element.first - 1] = element.second;
+		//tmp = element.second;
+		//data.erase (element.first);
+		//data [element.first + 1];
+	}
+	//data.erase (0);
+	data.clear ();
+	result.erase (0);
+	for (const std::pair <unsigned int, frame> & element : result)
+	{
+		//key = element.first;
+		//element.first = "key_tmp";
+		
+		data [element.first] = element.second;
+		//tmp = element.second;
+		//data.erase (element.first);
+		//data [element.first + 1];
+	}
+	//result.clear ();
+	
+	//std::swap (data, result);
+	//data = result
+	
+	return true;
 }
