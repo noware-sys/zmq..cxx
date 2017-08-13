@@ -2,3 +2,4 @@ A wrapper around ZMQ for C++
 
 Notable Components
 	zmq::msg (a multipart message)
+	zmq::msg::frame (a singlepart message)

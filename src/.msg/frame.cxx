@@ -70,10 +70,10 @@ zmq::msg::frame::operator const zmq_msg_t * (void) const
 
 zmq::msg::frame::operator const std::string (void) const
 {
-	//std::cout << "zmq::msg::frame::operator str()::" << std::endl;
+	//std::cerr << "zmq::msg::frame::operator str()::" << std::endl;
 	////std::string test;
 	////test = static_cast <const char *> (data.data ()), data.size ();
-	//std::cout << static_cast <const char *> (data.data ()) << std::endl;
+	//std::cerr << static_cast <const char *> (data.data ()) << std::endl;
 	//return std::string ("22 serialization::archive 15 0 0 1 0 0 0 7 subject 9 magnitude");
 	return std::string (static_cast <const char *> (data.data ()), data.size ());
 }
@@ -110,7 +110,7 @@ const zmq_msg_t * zmq::msg::frame::operator = (const zmq_msg_t * other)
 
 const std::string & zmq::msg::frame::operator = (const std::string & other)
 {
-	//std::cout << "zmq::msg::frame::operator=(str)::" << std::endl;
+	//std::cerr << "zmq::msg::frame::operator=(str)::" << std::endl;
 	
 	data.rebuild (other.size ());
 	std::memcpy (data.data (), other.data (), other.size ());

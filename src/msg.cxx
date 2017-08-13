@@ -199,12 +199,12 @@ const zmq_msg_t * zmq::msg::operator = (const zmq_msg_t * other)
 
 const std::string & zmq::msg::operator = (const std::string & other)
 {
-	//std::cout << "zmq::msg::operator=(str)::" << std::endl;
+	//std::cerr << "zmq::msg::operator=(str)::" << std::endl;
 	
 	data.clear ();
 	data [1] = other;
 	
-	//std::cout << std::string (data [1]) << std::endl;
+	//std::cerr << std::string (data [1]) << std::endl;
 	
 	return other;
 }
@@ -365,7 +365,7 @@ const bool zmq::msg::prepend (const frame & f)
 	
 	for (const std::pair <noware::nr, frame> & element : data)
 	{
-		std::cout << "zmq::msg::prepend()::data[" << element.first << "]==\"" << std::string (element.second) << "\"" << std::endl;
+		std::cerr << "zmq::msg::prepend()::data[" << element.first << "]==\"" << std::string (element.second) << "\"" << std::endl;
 	}
 	
 	return true;
@@ -373,22 +373,22 @@ const bool zmq::msg::prepend (const frame & f)
 
 const bool zmq::msg::first_space_clear (void)
 {
-	std::cout << "zmq::msg::first_clear_space()::called" << std::endl;
+	std::cerr << "zmq::msg::first_clear_space()::called" << std::endl;
 	if (is_empty ())
 	{
 		// nothing to do
-		std::cout << "zmq::msg::first_clear_space()::is_empty()==[true]" << std::endl;
+		std::cerr << "zmq::msg::first_clear_space()::is_empty()==[true]" << std::endl;
 		return true;
 	}
-	std::cout << "zmq::msg::first_clear_space()::is_empty()==[false]" << std::endl;
+	std::cerr << "zmq::msg::first_clear_space()::is_empty()==[false]" << std::endl;
 	
 	if (is_full ())
 	{
-		std::cout << "zmq::msg::first_clear_space()::is_full()==[true]" << std::endl;
+		std::cerr << "zmq::msg::first_clear_space()::is_full()==[true]" << std::endl;
 		// no more space
 		return false;
 	}
-	std::cout << "zmq::msg::first_clear_space()::is_full()==[false]" << std::endl;
+	std::cerr << "zmq::msg::first_clear_space()::is_full()==[false]" << std::endl;
 	
 	std::map <unsigned int, frame> result;
 	//std::string key;
@@ -430,13 +430,13 @@ const bool zmq::msg::first_space_clear (void)
 		//tmp = element.second;
 		//data.erase (element.first);
 		//data [element.first + 1];
-		std::cout << "zmq::msg::first_clear_space()::data[" << element.first << "]==\"" << std::string (element.second) << "\"" << std::endl;
+		std::cerr << "zmq::msg::first_clear_space()::data[" << element.first << "]==\"" << std::string (element.second) << "\"" << std::endl;
 	}
 	
 	//std::swap (data, result);
 	//data = result
 	
-	std::cout << "zmq::msg::first_clear_space()::return" << std::endl;
+	std::cerr << "zmq::msg::first_clear_space()::return" << std::endl;
 	return true;
 }
 
