@@ -6,9 +6,9 @@
 
 #include <zmq.hpp>
 #include <czmq.h>
-#include <zmsg.c>
+//#include <zmsg.c>
 
-#include <noware/nr.cxx>
+#include <cln/nr.cxx>
 
 #include <string>
 #include <iostream>
@@ -88,7 +88,7 @@ zmq::msg::operator const zmsg_t * (void) const
 	msg = zmsg_new ();
 	//frame = zframe_new_empty ();
 	
-	for (const std::pair <noware::nr, zmq::msg::frame> & _frame : data)
+	for (const std::pair <cln::nr, zmq::msg::frame> & _frame : data)
 	{
 		//zframe_reset (_frame, );
 		//frame_p = (zframe_t *) _frame.second;
@@ -106,34 +106,34 @@ zmq::msg::operator const zmsg_t * (void) const
 
 zmq::msg::operator const frame & (void) const
 {
-	return data [1];
+	return data [0];
 }
 
 zmq::msg::operator const zframe_t * (void) const
 {
-	return data [1];
+	return data [0];
 }
 
 zmq::msg::operator const message_t & (void) const
 {
 	//return data [1].operator const message_t & ();
-	return data [1];
+	return data [0];
 }
 
 zmq::msg::operator message_t & (void)
 {
 	//return data [1].operator message_t & ();
-	return data [1];
+	return data [0];
 }
 
 zmq::msg::operator const zmq_msg_t * (void) const
 {
-	return data [1];
+	return data [0];
 }
 
 zmq::msg::operator const std::string (void) const
 {
-	return data [1];
+	return data [0];
 }
 
 const zmq::msg & zmq::msg::operator = (const msg & other)
@@ -146,11 +146,11 @@ const zmq::msg & zmq::msg::operator = (const msg & other)
 const zmsg_t * zmq::msg::operator = (const zmsg_t * other)
 {
 	zframe_t * frm;
-	noware::nr ndx;
+	cln::nr ndx;
 	
 	data.clear ();
 	frm = zmsg_first (other);
-	ndx = 1;
+	ndx = 0;
 	while (frm != nullptr)
 	{
 		// This makes a copy of the frame.
@@ -168,7 +168,7 @@ const zmsg_t * zmq::msg::operator = (const zmsg_t * other)
 const zmq::msg::frame & zmq::msg::operator = (const frame & other)
 {
 	data.clear ();
-	data [1] = other;
+	data [0] = other;
 	
 	return other;
 }
@@ -176,7 +176,7 @@ const zmq::msg::frame & zmq::msg::operator = (const frame & other)
 const zframe_t * zmq::msg::operator = (const zframe_t * other)
 {
 	data.clear ();
-	data [1] = other;
+	data [0] = other;
 	
 	return other;
 }
@@ -184,7 +184,7 @@ const zframe_t * zmq::msg::operator = (const zframe_t * other)
 const zmq::message_t & zmq::msg::operator = (const message_t & other)
 {
 	data.clear ();
-	data [1] = other;
+	data [0] = other;
 	
 	return other;
 }
@@ -192,7 +192,7 @@ const zmq::message_t & zmq::msg::operator = (const message_t & other)
 const zmq_msg_t * zmq::msg::operator = (const zmq_msg_t * other)
 {
 	data.clear ();
-	data [1] = other;
+	data [0] = other;
 	
 	return other;
 }
@@ -202,7 +202,7 @@ const std::string & zmq::msg::operator = (const std::string & other)
 	//std::cerr << "zmq::msg::operator=(str)::" << std::endl;
 	
 	data.clear ();
-	data [1] = other;
+	data [0] = other;
 	
 	//std::cerr << std::string (data [1]) << std::endl;
 	
@@ -244,6 +244,41 @@ const bool zmq::msg::operator == (const std::string & other) const
 	return *this == msg (other);
 }
 
+const bool zmq::msg::operator != (const msg & other) const
+{
+	return !(data == other.data);
+}
+
+const bool zmq::msg::operator != (const zmsg_t * other) const
+{
+	return !(*this == other);
+}
+
+const bool zmq::msg::operator != (const frame & other) const
+{
+	return !(*this == other);
+}
+
+const bool zmq::msg::operator != (const zframe_t * other) const
+{
+	return !(*this == other);
+}
+
+const bool zmq::msg::operator != (const message_t & other) const
+{
+	return !(*this == other);
+}
+
+const bool zmq::msg::operator != (const zmq_msg_t * other) const
+{
+	return !(*this == other);
+}
+
+const bool zmq::msg::operator != (const std::string & other) const
+{
+	return !(*this == other);
+}
+
 const bool zmq::msg::is_empty () const
 {
 	return data.empty ();
@@ -259,7 +294,7 @@ const bool zmq::msg::first (frame & f) const
 	if (is_empty ())
 		return false;
 	
-	f = data [1];
+	f = data [0];
 	
 	return true;
 }
@@ -269,7 +304,7 @@ const bool zmq::msg::last (frame & f) const
 	if (is_empty ())
 		return false;
 	
-	f = data [data.size ()];
+	f = data [data.size () - 1];
 	
 	return true;
 }
@@ -279,8 +314,8 @@ const zmq::msg::frame zmq::msg::first (void) const
 	frame f;
 	
 	if (!is_empty ())
-		f = data [1];
-		
+		f = data [0];
+	
 	return f;
 }
 
@@ -289,7 +324,7 @@ const zmq::msg::frame zmq::msg::last (void) const
 	frame f;
 	
 	if (!is_empty ())
-		f = data [data.size ()];
+		f = data [data.size () - 1];
 		
 	return f;
 }
@@ -298,6 +333,8 @@ const bool zmq::msg::first_rm (void)
 {
 	if (is_empty ())
 		return true;
+	
+	data.erase (0);
 	
 	if (!first_space_fill ())
 		return false;
@@ -322,8 +359,8 @@ const bool zmq::msg::first_rm (frame & f)
 	if (is_empty ())
 		return true;
 	
-	f = data [1];
-	//data.erase (1);
+	f = data [0];
+	data.erase (0);
 	
 	if (!first_space_fill ())
 		return false;
@@ -336,8 +373,8 @@ const bool zmq::msg::last_rm (frame & f)
 	if (is_empty ())
 		return true;
 	
-	f = data [data.size ()];
-	data.erase (data.size ());
+	f = data [data.size () - 1];
+	data.erase (data.size () - 1);
 	
 	return true;
 }
@@ -347,7 +384,7 @@ const bool zmq::msg::append (const frame & f)
 	if (is_full ())
 		return false;
 	
-	data [data.size () + 1] = f;
+	data [data.size ()] = f;
 	
 	return true;
 }
@@ -360,10 +397,10 @@ const bool zmq::msg::prepend (const frame & f)
 	if (!first_space_clear ())
 		return false;
 	
-	data [1] = f;
+	data [0] = f;
 	//data.insert_or_assign (1, f);
 	
-	for (const std::pair <noware::nr, frame> & element : data)
+	for (const std::pair <cln::nr, frame> & element : data)
 	{
 		std::cerr << "zmq::msg::prepend()::data[" << element.first << "]==\"" << std::string (element.second) << "\"" << std::endl;
 	}
@@ -395,7 +432,7 @@ const bool zmq::msg::first_space_clear (void)
 	//std::string key_tmp;
 	//frame tmp;
 	
-	for (const std::pair <unsigned int, frame> & element : data)
+	for (std::pair <unsigned int, frame> const & element : data)
 	{
 		//key = element.first;
 		//element.first = "key_tmp";
@@ -408,7 +445,7 @@ const bool zmq::msg::first_space_clear (void)
 	}
 	//data.erase (0);
 	data.clear ();
-	for (const std::pair <unsigned int, frame> & element : result)
+	for (std::pair <unsigned int, frame> const & element : result)
 	{
 		//key = element.first;
 		//element.first = "key_tmp";
@@ -467,7 +504,7 @@ const bool zmq::msg::first_space_fill (void)
 	}
 	//data.erase (0);
 	data.clear ();
-	result.erase (0);
+	//result.erase (0);
 	for (const std::pair <unsigned int, frame> & element : result)
 	{
 		//key = element.first;

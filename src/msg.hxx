@@ -5,7 +5,7 @@
 #include <zmq.hpp>
 #include <czmq.h>
 
-#include <noware/nr.hxx>
+#include <cln/nr.hxx>
 
 //#include "frame.hxx"
 
@@ -14,7 +14,6 @@
 namespace zmq
 {
 	// A multipart message
-	
 	class msg
 	{
 		public:
@@ -46,6 +45,7 @@ namespace zmq
 			virtual const message_t & operator = (const message_t &);
 			virtual const zmq_msg_t * operator = (const zmq_msg_t *);
 			virtual const std::string & operator = (const std::string &);
+			//virtual char const [] const operator = (char const [] const);
 			
 			virtual const bool operator == (const msg &) const;
 			virtual const bool operator == (const zmsg_t *) const;
@@ -54,6 +54,15 @@ namespace zmq
 			virtual const bool operator == (const message_t &) const;
 			virtual const bool operator == (const zmq_msg_t *) const;
 			virtual const bool operator == (const std::string &) const;
+			//virtual const bool operator == (char const [] const) const;
+			
+			virtual const bool operator != (const msg &) const;
+			virtual const bool operator != (const zmsg_t *) const;
+			virtual const bool operator != (const frame &) const;
+			virtual const bool operator != (const zframe_t *) const;
+			virtual const bool operator != (const message_t &) const;
+			virtual const bool operator != (const zmq_msg_t *) const;
+			virtual const bool operator != (const std::string &) const;
 			
 			virtual const bool is_empty () const;
 			virtual const bool is_full () const;

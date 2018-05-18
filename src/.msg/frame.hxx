@@ -37,10 +37,11 @@ namespace zmq
 			virtual const bool operator == (const zmq_msg_t *) const;
 			virtual const bool operator == (const std::string &) const;
 			
-			//virtual const bool operator != (const frame &) const;
-			//virtual const bool operator != (const zframe_t &) const;
-			//virtual const bool operator != (const message_t &) const;
-			//virtual const bool operator != (const zmq_msg_t &) const;
+			virtual const bool operator != (const frame &) const;
+			virtual const bool operator != (const zframe_t *) const;
+			virtual const bool operator != (const message_t &) const;
+			virtual const bool operator != (const zmq_msg_t *) const;
+			virtual const bool operator != (const std::string &) const;
 			
 			static void free (void * /* data*/, void * /* hint*/);
 		//protected:

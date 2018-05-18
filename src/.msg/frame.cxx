@@ -143,6 +143,31 @@ const bool zmq::msg::frame::operator == (const std::string & other) const
 	return *this == frame (other);
 }
 
+const bool zmq::msg::frame::operator != (const frame & other) const
+{
+	return data.equal (&(other.data));
+}
+
+const bool zmq::msg::frame::operator != (const zframe_t * other) const
+{
+	return !(*this == other);
+}
+
+const bool zmq::msg::frame::operator != (const zmq::message_t & other) const
+{
+	return !(*this == other);
+}
+
+const bool zmq::msg::frame::operator != (const zmq_msg_t * other) const
+{
+	return !(*this == other);
+}
+
+const bool zmq::msg::frame::operator != (const std::string & other) const
+{
+	return !(*this == other);
+}
+
 void zmq::msg::frame::free (void * data, void * hint)
 {
 	::free (data);
