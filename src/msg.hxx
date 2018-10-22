@@ -6,6 +6,7 @@
 #include <czmq.h>
 
 #include <cln/nr.hxx>
+//#include <cln/var.hxx>
 
 //#include "frame.hxx"
 
@@ -82,18 +83,22 @@ namespace zmq
 			virtual const bool append (const frame &);
 			virtual const bool prepend (const frame &);
 			
+			void dump (void) const;
+			
 			// frame
+			//frame & operator [] (int unsigned const &/* key*/);
 			
 			//virtual const bool operator != (const msg &) const;
 			//virtual const bool operator != (const zmsg_t &) const;
 			//virtual const bool operator != (const frame &) const;
 		//protected:
+			std::map <int unsigned/* key type*/, frame/* value type*/> data;
 			//std::map <noware::nr/* key type*/, frame/* value type*/> data;
-			std::map <unsigned int/* key type*/, frame/* value type*/> data;
+			//std::map <noware::var/* key type*/, frame/* value type*/> data;
 			//zmsg_t data;
-		protected:
-			virtual const bool fin (void);
+		private:
 			virtual const bool init (void);
+			virtual const bool termin (void);
 			
 			virtual const bool first_space_clear (void);
 			virtual const bool first_space_fill (void);

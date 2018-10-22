@@ -68,10 +68,10 @@ zmq::msg::msg (const std::string & other)
 
 zmq::msg::~msg (void)
 {
-	fin ();
+	termin ();
 }
 
-const bool zmq::msg::fin (void)
+const bool zmq::msg::termin (void)
 {
 }
 
@@ -88,7 +88,8 @@ zmq::msg::operator const zmsg_t * (void) const
 	msg = zmsg_new ();
 	//frame = zframe_new_empty ();
 	
-	for (const std::pair <cln::nr, zmq::msg::frame> & _frame : data)
+	//for (const std::pair <cln::nr, zmq::msg::frame> & _frame : data)
+	for (const std::pair <unsigned int, /*zmq::msg::*/frame> & _frame : data)
 	{
 		//zframe_reset (_frame, );
 		//frame_p = (zframe_t *) _frame.second;
@@ -146,7 +147,8 @@ const zmq::msg & zmq::msg::operator = (const msg & other)
 const zmsg_t * zmq::msg::operator = (const zmsg_t * other)
 {
 	zframe_t * frm;
-	cln::nr ndx;
+	//cln::nr ndx;
+	unsigned int ndx;
 	
 	data.clear ();
 	frm = zmsg_first (other);
@@ -325,7 +327,7 @@ const zmq::msg::frame zmq::msg::last (void) const
 	
 	if (!is_empty ())
 		f = data [data.size () - 1];
-		
+	
 	return f;
 }
 
@@ -400,10 +402,11 @@ const bool zmq::msg::prepend (const frame & f)
 	data [0] = f;
 	//data.insert_or_assign (1, f);
 	
-	for (const std::pair <cln::nr, frame> & element : data)
-	{
-		std::cerr << "zmq::msg::prepend()::data[" << element.first << "]==\"" << std::string (element.second) << "\"" << std::endl;
-	}
+	//for (const std::pair <cln::nr, frame> & element : data)
+	//{
+	//	std::cerr << "zmq::msg::prepend()::data[" << element.first << "]==\"" << std::string (element.second) << "\"" << std::endl;
+	//}
+	dump ();
 	
 	return true;
 }
@@ -427,12 +430,12 @@ const bool zmq::msg::first_space_clear (void)
 	}
 	std::cerr << "zmq::msg::first_clear_space()::is_full()==[false]" << std::endl;
 	
-	std::map <unsigned int, frame> result;
+	std::map <int unsigned, frame> result;
 	//std::string key;
 	//std::string key_tmp;
 	//frame tmp;
 	
-	for (std::pair <unsigned int, frame> const & element : data)
+	for (std::pair <int unsigned, frame> const & element : data)
 	{
 		//key = element.first;
 		//element.first = "key_tmp";
@@ -445,6 +448,7 @@ const bool zmq::msg::first_space_clear (void)
 	}
 	//data.erase (0);
 	data.clear ();
+	/*
 	for (std::pair <unsigned int, frame> const & element : result)
 	{
 		//key = element.first;
@@ -456,19 +460,11 @@ const bool zmq::msg::first_space_clear (void)
 		//data.erase (element.first);
 		//data [element.first + 1];
 	}
-	//result.clear ();
+	*/
+	data = result;
+	result.clear ();
 	
-	for (const std::pair <unsigned int, frame> & element : data)
-	{
-		//key = element.first;
-		//element.first = "key_tmp";
-		
-		//data [element.first] = element.second;
-		//tmp = element.second;
-		//data.erase (element.first);
-		//data [element.first + 1];
-		std::cerr << "zmq::msg::first_clear_space()::data[" << element.first << "]==\"" << std::string (element.second) << "\"" << std::endl;
-	}
+	dump ();
 	
 	//std::swap (data, result);
 	//data = result
@@ -522,3 +518,54 @@ const bool zmq::msg::first_space_fill (void)
 	
 	return true;
 }
+
+
+void zmq::msg::dump (void) const
+{
+	std::string str;
+	int unsigned size;
+	
+	std::cerr << std::hex;
+	std::cerr << std::setw (2);
+	//std::cerr << std::setfill ('0');
+	std::cerr << std::noshowbase;
+	
+	for (std::pair <int unsigned, frame> const & element : data)
+	{
+		str = std::string (element.second);
+		size = str.size ();
+		
+		//key = element.first;
+		//element.first = "key_tmp";
+		
+		//data [element.first] = element.second;
+		//tmp = element.second;
+		//data.erase (element.first);
+		//data [element.first + 1];
+		
+		//std::cerr << "zmq::msg::dump()::data[" << element.first << "]==\"" << std::string (element.second) << "\"" << std::endl;
+		//std::cerr << std::setfill('0') << std::setw(2) << std::hex << (unsigned int) element.second.data ();
+		
+		std::cerr << '[' << element.first << ']';
+		std::cerr << '=';
+		
+		std::cerr << '[';
+		for (int unsigned i = 0; i < size; ++i)
+		{
+			std::cerr << std::setfill ('0') << (int unsigned) str [i];
+		}
+		std::cerr << ']';
+		std::cerr << std::endl;
+	}
+	
+	std::cerr << std::dec;
+	std::cerr << std::setw (0);
+	std::cerr << std::setfill ('\0');
+}
+
+/*
+zmq::msg::frame & zmq::msg::operator [] (int unsigned const & key)
+{
+	return data [key];
+}
+*/
